@@ -12,12 +12,13 @@ export function saveUser(user) {
 }
 
 export function updateUserById(user,id) {
-    return axios.put(`${API_BASE_URL_FOR_USER}/updateUser/{id}`,user, { headers: authHeader() }).then((response)=>response.data);
+    return axios.put(`${API_BASE_URL_FOR_USER}/updateUser/${id}`,user, { headers: authHeader() }).then((response)=>response.data);
 }
-export function updateUserStatusById() {
-    return axios.get(`${API_BASE_URL_FOR_USER}/updateUser/{id}`, { headers: authHeader() }).then((response)=>response.data);
+export function updateUserStatusById(id) {
+    return axios.get(`${API_BASE_URL_FOR_USER}/updateUser/${id}`, { headers: authHeader() }).then((response)=>response.data);
 }
 
-export function getUserById() {
-    return axios.get(`${API_BASE_URL_FOR_USER}/getUser/{id}`, { headers: authHeader() }).then((response)=>response.data);
+export function getUserById(userId) {
+    console.log("getById",userId);
+    return axios.get(`${API_BASE_URL_FOR_USER}/getUser/${userId}`, { headers: authHeader() }).then((response)=>response.data);
 }

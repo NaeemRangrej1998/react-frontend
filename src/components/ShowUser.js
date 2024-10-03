@@ -46,7 +46,7 @@ function ShowUser() {
                                 <td>{user.firstName}</td>
                                 <td>{user.lastName}</td>
                                 <td>{user.email}</td>
-                                <td>{user.rolesName}</td>
+                                <td>{user.roleId}</td>
                                 <td>
                                     <Link to={`/edit-user/${user.id}`}>
                                         <i className="fa fa-pencil" aria-hidden="true"></i>

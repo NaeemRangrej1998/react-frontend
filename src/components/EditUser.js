@@ -1,48 +1,60 @@
-import React, {useEffect, useState} from 'react'
-import {useHistory, useParams} from "react-router-dom/cjs/react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from "react-router-dom";
+// import {Link, withRouter} from "react-router-dom";
 import '../css/User.css';
 import Loader from '../commons/Loader';
-import {getUserById, saveUser, updateUserById} from "../api/use.api";
+import { getUserById, saveUser, updateUserById } from "../api/use.api";
 
-function EditUser() {
+function EditUser({props}) {
     const history = useHistory();
-    const {id} = useParams();
+    const { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState({});
+    const [role] = useState([
+        { value: '1', label: 'USER' },
+        { value: '2', label: 'ADMIN' }
+    ]);
+    const [selectedRole, setSelectedRole] = useState('');
 
     useEffect(() => {
-        getUser()
+        getUser();
     }, []);
 
     const getUser = () => {
         getUserById(id)
             .then((item) => {
+                console.log("item", item);
                 setUser(item.data);
+                setSelectedRole(item.data.roleId); // Set role if it's already present in user data
             })
             .catch((err) => {
                 console.log(err);
             });
     };
 
-    const handelInput = (event) => {
-        event.preventDefault();
-        const {name, value} = event.target;
-        console.log(name, value)
-        setUser({...user, [name]: value});
-    }
+    const handleInput = (event) => {
+        const { name, value } = event.target;
+        setUser({ ...user, [name]: value });
+    };
 
-    const handelSubmit = async (event) => {
+    const handleRoleChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedRole(selectedValue); // Update selected role
+        setUser({ ...user, roleId: selectedValue }); // Update roleId in user state
+    };
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(user)
         try {
             setIsLoading(true);
             const response = await updateUserById(user, id);
 
             if (response.ok) {
                 console.log('Form submitted successfully!');
-                setUser({firstName: "", lastName: "", email: "", password: "", roleName: ""})
-                history.push.pathname('/showUser');
+                setUser({ firstName: "", lastName: "", email: "", roleId: "" });
+                history.replace("/showUser");
+
             } else {
                 console.error('Form submission failed!');
             }
@@ -52,44 +64,46 @@ function EditUser() {
         } finally {
             setIsLoading(false);
         }
-    }
+    };
+
     return (
         <div className='user-form'>
             <div className='heading'>
-                {isLoading && <Loader/>}
+                {isLoading && <Loader />}
                 {error && <p>Error: {error}</p>}
                 <p>Edit User Form</p>
             </div>
-            <form onSubmit={handelSubmit}>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="firstName" className="form-label">FirstName</label>
-                    <input type="text" className="form-control" id="firstName" name="firstName" value={user.firstName}
-                           onChange={handelInput}/>
+                    <input type="text" className="form-control" id="firstName" name="firstName" value={user.firstName || ""}
+                           onChange={handleInput} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="lastName" className="form-label">LastName</label>
-                    <input type="text" className="form-control" id="lastName" name="lastName" value={user.lastName}
-                           onChange={handelInput}/>
+                    <input type="text" className="form-control" id="lastName" name="lastName" value={user.lastName || ""}
+                           onChange={handleInput} />
                 </div>
                 <div className="mb-3 mt-3">
                     <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="email" name="email" value={user.email}
-                           onChange={handelInput}/>
+                    <input type="email" className="form-control" id="email" name="email" value={user.email || ""}
+                           onChange={handleInput} />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="password" name="password" value={user.password}
-                           onChange={handelInput}/>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="roleName" className="form-label">RoleName</label>
-                    <input type="text" className="form-control" id="roleName" name="roleName" value={user.roleName}
-                           onChange={handelInput}/>
+                    <label htmlFor="roleId" className="form-label">Role</label>
+                    <select className="form-control" id="roleId" name="roleId" value={selectedRole} onChange={handleRoleChange}>
+                        <option value="">Select Role</option>
+                        {role.map((r) => (
+                            <option key={r.value} value={r.value}>
+                                {r.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <button type="submit" className="btn btn-primary submit-btn">Submit</button>
             </form>
         </div>
-    )
+    );
 }
 
-export default EditUser
+export default EditUser;

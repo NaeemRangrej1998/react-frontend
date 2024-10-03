@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
+// import {Link, withRouter} from "react-router-dom";
 import {useHistory} from "react-router-dom/cjs/react-router-dom";
 import '../css/User.css';
 import Loader from '../commons/Loader';
 import {saveUser} from "../api/use.api";
 
-function CreateUser() {
+function CreateUser({props}) {
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
@@ -13,9 +14,13 @@ function CreateUser() {
         lastName: "",
         email: "",
         password: "",
-        roleName: ""
+        roleId: ""
     })
-
+    const [role] = useState([
+        { value: '1', label: 'USER' },
+        { value: '2', label: 'ADMIN' }
+    ]);
+    const [selectedRole, setSelectedRole] = useState('');
     const handelInput = (event) => {
         event.preventDefault();
         const {name, value} = event.target;
@@ -23,7 +28,11 @@ function CreateUser() {
         setUser({...user, [name]: value});
     }
 
-
+    const handleRoleChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedRole(selectedValue); // Update selected role
+        setUser({ ...user, roleId: selectedValue }); // Update roleId in user state
+    };
     const handelSubmit = async (event) => {
         event.preventDefault();
         console.log(user)
@@ -33,8 +42,8 @@ function CreateUser() {
 
             if (response.ok) {
                 console.log('Form submitted successfully!');
-                setUser({firstName: "",lastName: "",email: "",password: "",roleName: ""})
-                history.push.pathname('/showUser');
+                setUser({firstName: "",lastName: "",email: "",password: "",roleId: ""})
+               history.push('/showUser');
             } else {
                 console.error('Form submission failed!');
             }
@@ -75,9 +84,15 @@ function CreateUser() {
                            onChange={handelInput}/>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="roleName" className="form-label">RoleName</label>
-                    <input type="text" className="form-control" id="roleName" name="roleName" value={user.roleName}
-                           onChange={handelInput}/>
+                    <label htmlFor="roleId" className="form-label">RoleName</label>
+                    <select className="form-control" id="roleId" name="roleId" value={selectedRole} onChange={handleRoleChange}>
+                        <option value="">Select Role</option>
+                        {role.map((r) => (
+                            <option key={r.value} value={r.value}>
+                                {r.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <button type="submit" className="btn btn-primary submit-btn">Submit</button>
             </form>

@@ -1,52 +1,57 @@
 import React, { useEffect, useState } from "react";
 import '../css/User.css';
+import {Link, withRouter} from "react-router-dom";
 import { useParams } from "react-router-dom";
-const User = () => {
+import {getUserById} from "../api/use.api";
+import Loader from "../commons/Loader";
+const User = ({props}) => {
     const [user, setUser] = useState([]);
     const { id } = useParams();
-    const getUserApi = "http://localhost:3000/user";
 
-    // useEffect(() => {
-    //     getUser();
-    // }, []);
+    useEffect(() => {
+        getUser(id);
+    }, []);
 
-    // const getUser = () => {
-    //     axios
-    //         .get(getUserApi.concat("/") + id)
-    //         .then((item) => {
-    //             setUser(item.data);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // };
+    const getUser = (id) => {
+       getUserById(id)
+            .then((item) => {
+                setUser(item.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    function hadleCancleButton() {
+        props.history.push('/showUser');
+    }
 
     return (
-        <div className="user mt-5">
-            <table className="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Name</td>
-                    <td>{user.name}</td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td>{user.email}</td>
-                </tr>
-                <tr>
-                    <td>Phone</td>
-                    <td>{user.phone}</td>
-                </tr>
-                </tbody>
-            </table>
+        <div className='user-form'>
+            <form>
+                <div className="mb-3">
+                    <label htmlFor="firstName" className="form-label">FirstName</label>
+                    <input type="text" className="form-control" id="firstName" name="firstName" value={user.firstName || ""}/>
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="lastName" className="form-label">LastName</label>
+                    <input type="text" className="form-control" id="lastName" name="lastName" value={user.lastName || ""}/>
+                </div>
+                <div className="mb-3 mt-3">
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input type="email" className="form-control" id="email" name="email" value={user.email || ""}/>
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input type="password" className="form-control" id="password" name="password" value={user.password || ""}/>
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="roleId" className="form-label">Role</label>
+                    <input type="roleId" className="form-control" id="roleId" name="roleId" value={user.roleId || ""}/>
+                </div>
+                <button type="submit" className="btn btn-primary submit-btn" onSubmit={hadleCancleButton}>Cancle</button>
+            </form>
         </div>
     );
 };
-export default User;
+export default withRouter(User);
