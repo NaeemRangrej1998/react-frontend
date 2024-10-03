@@ -1,24 +1,32 @@
 import axios from "axios";
 import authHeader from "../utils/authHeader";
-
+import {axiosInstance} from "../utils/AxiousService";
 const API_BASE_URL_FOR_USER = "http://localhost:8080/user";
 
+// export function getAllUsers() {
+//     return axios.get(`${API_BASE_URL_FOR_USER}/getUser`, { headers: authHeader() }).then((response)=>response.data);
+// }
+
 export function getAllUsers() {
-    return axios.get(`${API_BASE_URL_FOR_USER}/getUser`, { headers: authHeader() }).then((response)=>response.data);
+    return axiosInstance.get("/user/getUser" ).then((response)=>response.data);
 }
 
 export function saveUser(user) {
-    return axios.post(`${API_BASE_URL_FOR_USER}/addUser`,user, { headers: authHeader() }).then((response)=>response.data);
+    return axiosInstance.post(`user/addUser`,user, ).then((response)=>response.data);
 }
 
 export function updateUserById(user,id) {
-    return axios.put(`${API_BASE_URL_FOR_USER}/updateUser/${id}`,user, { headers: authHeader() }).then((response)=>response.data);
+    return axiosInstance.put(`user/updateUser/${id}`,user, ).then((response)=>response.data);
 }
 export function updateUserStatusById(id) {
-    return axios.get(`${API_BASE_URL_FOR_USER}/updateUser/${id}`, { headers: authHeader() }).then((response)=>response.data);
+    return axiosInstance.get(`user/updateUser/${id}`, ).then((response)=>response.data);
 }
 
 export function getUserById(userId) {
     console.log("getById",userId);
-    return axios.get(`${API_BASE_URL_FOR_USER}/getUser/${userId}`, { headers: authHeader() }).then((response)=>response.data);
+    return axiosInstance.get(`user/getUser/${userId}`, ).then((response)=>response.data);
+}
+export function deleteUserById(userId) {
+    console.log("getById",userId);
+    return axiosInstance.delete(`user/deleteUser/${userId}`, ).then((response)=>response.data);
 }

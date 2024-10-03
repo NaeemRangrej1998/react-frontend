@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = 'http://localhost:8080';
+export const BASE_URL = 'http://localhost:8080/';
 
 export const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -9,9 +9,10 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     config=>{
-        const accessToken=localStorage.getItem('accessToken')
+
+        const accessToken = localStorage.getItem('accessToken');
         if (accessToken){
-            config.headers.Authorization=`Bearer${accessToken}`
+            config.headers.Authorization=`Bearer ${accessToken}`
         }
         return config
     },

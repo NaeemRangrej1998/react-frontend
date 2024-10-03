@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import '../css/User.css';
+import '../../css/User.css';
 import {Link, withRouter} from "react-router-dom";
 import { useParams } from "react-router-dom";
-import {getUserById} from "../api/use.api";
-import Loader from "../commons/Loader";
+import {getUserById} from "../../api/use.api";
+import Loader from "../../commons/Loader";
 const User = ({props}) => {
     const [user, setUser] = useState([]);
     const { id } = useParams();

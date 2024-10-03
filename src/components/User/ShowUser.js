@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {getAllUsers} from "../api/use.api";
+import {deleteUserById, getAllUsers} from "../../api/use.api";
 import {Link} from "react-router-dom";
-import Loader from '../commons/Loader';
+import Loader from '../../commons/Loader';
+import '../../css/User.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function ShowUser() {
     const [user, setUser] = useState([]);
@@ -19,6 +21,14 @@ function ShowUser() {
         })
     }, []);
 
+    function handleDelete(id) {
+        deleteUserById(id).then((res)=>{
+            console.log("UserDeleted");
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+
     if (user.length < 0) {
         return <h1>no user found</h1>;
 
@@ -27,7 +37,7 @@ function ShowUser() {
             <div className="mt-5">
                 {isLoading && <Loader />}
                 {error && <p>Error: {error}</p>}
-                <table className="table table-striped">
+                <table className="table table-striped center" >
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -47,14 +57,14 @@ function ShowUser() {
                                 <td>{user.lastName}</td>
                                 <td>{user.email}</td>
                                 <td>{user.roleId}</td>
-                                <td>
+                                <td className="actions">
                                     <Link to={`/edit-user/${user.id}`}>
-                                        <i className="fa fa-pencil" aria-hidden="true"></i>
+                                        <i className="fas fa-pencil-alt" aria-hidden="true"></i>
                                     </Link>
                                     <Link to={`/user/${user.id}`}>
-                                        <i className="fa fa-eye" aria-hidden="true"></i>
+                                        <i className="fas fa-eye" aria-hidden="true"></i>
                                     </Link>
-                                        <i className="fa fa-trash-o" aria-hidden="true"></i>
+                                    <i className="fas fa-trash-alt" style={{cursor:"pointer"}} onClick={()=>handleDelete(user.id)} aria-hidden="true"></i>
                                 </td>
                             </tr>
                         );

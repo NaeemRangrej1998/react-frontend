@@ -5,15 +5,15 @@
 
 .user-form{
     max-width: 500px;
-    margin: 0px auto;
-
     padding: 35px 35px 50px 35px;
-    margin-top: 50px;
-    background-color: #ffffff ;
+    margin: 50px auto 0px;
+    background-color: #f2f6fc ;
+    border-radius: 10px !important;
+
 }
 
 .form-control{
-    border-radius: 0px !important;
+    border-radius: 10px !important;
 }
 .form-label{
     font-weight: 600;
@@ -48,4 +48,13 @@
     border: 1px solid red;
     background-color: #ffffff;
 
+}
+.actions {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.center{
+    text-align: center;
 }
