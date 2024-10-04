@@ -1,12 +1,17 @@
 import React, {useEffect, useState} from 'react'
-import {getAllRoles} from "../../api/Roles.api";
+import {deleteRoleById, getAllRoles} from "../../api/Roles.api";
 import role from "./Role";
 import {Link} from "react-router-dom";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../css/User.css';
-import {Button} from "@material-ui/core";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+
 function ShowRoles() {
     const [roles, setRoles] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRole, setSelectedRole] = useState(null);
+
     useEffect(() => {
         getAllRoles().then((res) => {
             if (res.status == 200) {
@@ -17,9 +22,22 @@ function ShowRoles() {
         })
     }, []);
 
-    function handleDelete(id) {
-        console.log(id);
-    }
+    const handleToggle = () => {
+        setIsModalOpen(!isModalOpen);  // Toggle the modal
+    };
+
+
+    const handleDelete = () => {
+        console.log(`Deleting role with ID: ${selectedRole}`);
+        deleteRoleById(selectedRole).then((res)=>{
+            if (res.status==200) {
+               alert( res.message)
+            }
+        })
+        // Call the API to delete the role
+        setIsModalOpen(false);  // Close the modal after deleting
+    };
+
 
     return (
         // <div>{roles.map(item=>item.rollName)}</div>
@@ -34,7 +52,7 @@ function ShowRoles() {
                 </tr>
                 </thead>
                 <tbody>
-                {roles?.map((role, i)=>{
+                {roles?.map((role, i) => {
                     return (
                         <tr>
                             <td>{role.id}</td>
@@ -46,7 +64,11 @@ function ShowRoles() {
                                 <Link to={`/role/${role.id}`}>
                                     <i className="fas fa-eye" aria-hidden="true"></i>
                                 </Link>
-                                <i className="fas fa-trash-alt" style={{cursor:"pointer"}} onClick={()=>handleDelete(role.id)} aria-hidden="true"></i>
+                                <i className="fas fa-trash-alt" style={{cursor: "pointer"}}
+                                   onClick={() => {
+                                       setSelectedRole(role.id);
+                                       handleToggle()
+                                   }} aria-hidden="true"></i>
                             </td>
                         </tr>
                     );
@@ -54,6 +76,20 @@ function ShowRoles() {
                 }
                 </tbody>
             </table>
+            <Modal show={isModalOpen} onHide={handleToggle}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Role</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <p>Are you sure you want to delete this roleId : {selectedRole} </p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleToggle}>Close</Button>
+                    <Button variant="primary" onClick={handleDelete}>Ok</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

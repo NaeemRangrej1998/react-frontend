@@ -48,21 +48,17 @@ function EditUser({props}) {
         event.preventDefault();
         try {
             setIsLoading(true);
-            const response = await updateUserById(user, id);
-
-            if (response.ok) {
+            await updateUserById(user, id).then((res)=>{
                 console.log('Form submitted successfully!');
-                setUser({ firstName: "", lastName: "", email: "", roleId: "" });
-                history.replace("/showUser");
-
-            } else {
-                console.error('Form submission failed!');
-            }
-
+                setIsLoading(false);
+                // setUser({ firstName: "", lastName: "", email: "", roleId: "" });
+                history.push('/showUser');
+            }).catch((error)=>{
+                setError(error.message);
+            });
         } catch (error) {
             setError(error.message);
         } finally {
-            setIsLoading(false);
         }
     };
 

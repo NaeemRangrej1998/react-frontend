@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import '../../css/User.css';
-import {Link, withRouter} from "react-router-dom";
+import {Link, useHistory, withRouter} from "react-router-dom";
 import { useParams } from "react-router-dom";
 import {getUserById} from "../../api/use.api";
 import Loader from "../../commons/Loader";
-const User = ({props}) => {
+const User = () => {
     const [user, setUser] = useState([]);
     const { id } = useParams();
-
+    const history=useHistory();
     useEffect(() => {
         getUser(id);
     }, []);
@@ -23,7 +23,10 @@ const User = ({props}) => {
     };
 
     function hadleCancleButton() {
-        props.history.push('/showUser');
+    }
+
+    function handleCancleButton() {
+        history.push('/showUser')
     }
 
     return (
@@ -49,7 +52,7 @@ const User = ({props}) => {
                     <label htmlFor="roleId" className="form-label">Role</label>
                     <input type="roleId" className="form-control" id="roleId" name="roleId" value={user.roleId || ""}/>
                 </div>
-                <button type="submit" className="btn btn-primary submit-btn" onSubmit={hadleCancleButton}>Cancle</button>
+                <button className="btn btn-primary " onClick={handleCancleButton}>Cancle</button>
             </form>
         </div>
     );

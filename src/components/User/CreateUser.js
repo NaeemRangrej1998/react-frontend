@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 // import {Link, withRouter} from "react-router-dom";
-import {useHistory} from "react-router-dom/cjs/react-router-dom";
+import {useHistory} from "react-router-dom";
 import '../../css/User.css';
 import Loader from '../../commons/Loader';
 import {saveUser} from "../../api/use.api";
@@ -39,10 +39,10 @@ function CreateUser({props}) {
         try {
             setIsLoading(true);
             const response = await saveUser(user);
-
-            if (response.ok) {
+            console.log("save user",response);
+            if (response.status==200) {
                 console.log('Form submitted successfully!');
-                setUser({firstName: "",lastName: "",email: "",password: "",roleId: ""})
+                // setUser({firstName: "",lastName: "",email: "",password: "",roleId: ""})
                history.push('/showUser');
             } else {
                 console.error('Form submission failed!');
