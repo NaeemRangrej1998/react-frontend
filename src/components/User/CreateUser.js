@@ -4,6 +4,7 @@ import {useHistory} from "react-router-dom";
 import '../../css/User.css';
 import Loader from '../../commons/Loader';
 import {saveUser} from "../../api/use.api";
+import {Slide, toast} from "react-toastify";
 
 function CreateUser({props}) {
     const history = useHistory();
@@ -17,8 +18,8 @@ function CreateUser({props}) {
         roleId: ""
     })
     const [role] = useState([
-        { value: '1', label: 'ADMIN' },
-        { value: '2', label: 'USER' }
+        {value: '1', label: 'ADMIN'},
+        {value: '2', label: 'USER'}
     ]);
     const [selectedRole, setSelectedRole] = useState('');
     const handelInput = (event) => {
@@ -31,35 +32,44 @@ function CreateUser({props}) {
     const handleRoleChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedRole(selectedValue); // Update selected role
-        setUser({ ...user, roleId: selectedValue }); // Update roleId in user state
+        setUser({...user, roleId: selectedValue}); // Update roleId in user state
     };
     const handelSubmit = async (event) => {
         event.preventDefault();
-        console.log(user)
         try {
             setIsLoading(true);
-            const response = await saveUser(user);
-            console.log("save user",response);
-            if (response.status==200) {
-                console.log('Form submitted successfully!');
-                // setUser({firstName: "",lastName: "",email: "",password: "",roleId: ""})
-               history.push('/showUser');
-            } else {
-                console.error('Form submission failed!');
-            }
-
-        } catch (error) {
-            setError(error.message);
-        } finally{
+            await saveUser(user).then(res => {
+                if (res.status && res.status == 200) {
+                    setIsLoading(false);
+                    toast.success("UserAdded Successfully!", {
+                        position: "top-center",
+                        transition: Slide
+                    })
+                    history.push('/showUser');
+                }
+                else {
+                    console.log("first",error);
+                    toast.error(res.data.error, {
+                        position: "top-center",
+                        transition: Slide
+                    })
+                }
+            })
+         } catch (error) {
+            console.log("second",error);
+            toast.error(error.response.data.error, {
+                position: "top-center",
+                transition: Slide
+            })
+        } finally {
             setIsLoading(false);
         }
     }
 
     return (
-        <div className='user-form'>
+        <div className='user-form' style={{position: 'relative'}}> {/* Add relative positioning */}
             <div className='heading'>
-                {isLoading && <Loader/>}
-                {error && <p>Error: {error}</p>}
+                {isLoading && <Loader/>} {/* Loader will be centered within the form */}
                 <p>User Form</p>
             </div>
             <form onSubmit={handelSubmit}>
@@ -85,7 +95,8 @@ function CreateUser({props}) {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="roleId" className="form-label">RoleName</label>
-                    <select className="form-control" id="roleId" name="roleId" value={selectedRole} onChange={handleRoleChange}>
+                    <select className="form-control" id="roleId" name="roleId" value={selectedRole}
+                            onChange={handleRoleChange}>
                         <option value="">Select Role</option>
                         {role.map((r) => (
                             <option key={r.value} value={r.value}>

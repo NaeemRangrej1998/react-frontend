@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {Link, withRouter} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {login} from "../../api/auth.api";
+import {setTokenInLocalStorage,setUserRoleInLocalStorage} from "../../utils/UserDetailsTokenService";
+import {Slide, toast, Zoom} from "react-toastify";
 
 class Login extends Component {
     constructor(props) {
@@ -18,30 +20,38 @@ class Login extends Component {
     handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await login({ email: this.state.email, password: this.state.password });
-            console.log(res);
-            if (res.status && res.status === 200) {
-                const { data: responseData } = res;
+           await login({ email: this.state.email, password: this.state.password }).then((res)=>{
+                if (res.status && res.status === 200) {
+                    const { data: responseData } = res;
 
-                if (responseData !== 'Invalid credentials') {
-                    // Assuming token is returned in the response data
-                    console.log(responseData.data);
-                    localStorage.setItem('accessToken', responseData.data.token);
-                    // this.props.setIsAuthenticated(true);  // Update authentication status in the parent App component
-                    // return <Navigate to='/register' />
-                    // Perform any state updates or actions
-                    this.props.history.push('/showUser');
+                    if (responseData !== 'Invalid credentials') {
+                        // Assuming token is returned in the response data
+                        setTokenInLocalStorage(responseData.data.token);
+                        setUserRoleInLocalStorage( responseData.data.userRole);
+                        toast.success('Login successful!',{
+                            transition: Slide,
+                            position: "top-center"
+                        });
+                        this.props.history.push('/showUser');
+                    } else {
+                        this.setState({ message: 'Invalid credentials' });
+                        toast.error('Login successful!',{
+                            transition: Slide,
+                            position: "top-center"
+                        });
+                    }
                 } else {
-                    this.setState({ message: 'Invalid credentials' });
+                    throw res;  // If response status is not 200, handle it as an error
                 }
-            } else {
-                throw res;  // If response status is not 200, handle it as an error
-            }
+            }).catch(error => {
+                toast.error(error.response.data.error, {
+                    transition: Slide,
+                    position: "top-center"
+                })
+            });
         } catch (error) {
             console.log('Login error:', error);
             this.setState({ message: 'Invalid credentials' });
-            // Optionally handle specific error messages here
-            // Example: warningToast(extractToastMessageFromError(error));
         }
     };
 

@@ -6,6 +6,7 @@ import {getUserById} from "../../api/use.api";
 import Loader from "../../commons/Loader";
 const User = () => {
     const [user, setUser] = useState([]);
+    const [isLoading,setIsLoading]=useState(false);
     const { id } = useParams();
     const history=useHistory();
     useEffect(() => {
@@ -13,9 +14,16 @@ const User = () => {
     }, []);
 
     const getUser = (id) => {
+        setIsLoading(true)
        getUserById(id)
-            .then((item) => {
-                setUser(item.data);
+            .then((res) => {
+                if (res && res.status==200 ){
+                    setUser(res.data);
+                    setIsLoading(false)
+                }
+                else {
+                    throw  res;
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -30,7 +38,10 @@ const User = () => {
     }
 
     return (
-        <div className='user-form'>
+            <div className='user-form' style={{position:"relative"}}>
+                <div className='heading'>
+                    {isLoading && <Loader />}
+                </div>
             <form>
                 <div className="mb-3">
                     <label htmlFor="firstName" className="form-label">FirstName</label>

@@ -1,7 +1,24 @@
 import React from 'react'
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import "./commons.css";
-export  default function Header() {
+import {isUserAuthenticatedAsAdmin, Logout} from "../utils/UserDetailsTokenService";
+import Button from "react-bootstrap/Button";
+
+export default function Header() {
+    const history = useHistory();
+    let userRole = localStorage.getItem('role');
+    console.log(userRole);
+    const admin = isUserAuthenticatedAsAdmin();
+
+    function handleLogout() {
+        // setTimeout(()=>{
+        //     Logout();
+        //     history.push('/login')
+        // },2000)
+        Logout();
+        history.push('/login')
+    }
+
     return (
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
             <div>
@@ -35,11 +52,16 @@ export  default function Header() {
                                         Show User
                                     </Link>
                                 </li>
-                                <li className="nav-item">
+                                {admin && <li className="nav-item">
                                     <Link className="nav-link" to="showRole">
                                         Show Roles
                                     </Link>
-                                </li>
+                                </li>}
+
+                                <div className="ms-auto">
+                                    <Button color="btn btn-outline-primary mx-2 text-white"
+                                            onClick={handleLogout}>Logout</Button>
+                                </div>
                             </ul>
                         </div>
                     </div>

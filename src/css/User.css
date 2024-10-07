@@ -58,3 +58,26 @@
 .center{
     text-align: center;
 }
+.modal-loader {
+    position: absolute;
+    width: 96%;
+    height: 82%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.modal-loader-form-sbm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Make sure it takes the full height of the parent */
+    position: absolute; /* Position it absolutely within the form */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7); /* Optional: add a background to dim the form */
+    z-index: 10; /* Ensure it's above other content */
+}

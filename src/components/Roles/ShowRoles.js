@@ -6,19 +6,29 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../css/User.css';
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Loader from "../../commons/Loader";
+import {Slide, toast} from "react-toastify";
 
 function ShowRoles() {
     const [roles, setRoles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState(null);
 
     useEffect(() => {
+        setIsLoading(true)
         getAllRoles().then((res) => {
             if (res.status == 200) {
                 setRoles(res.data)
+                setIsLoading(false)
             }
         }).catch((error) => {
             console.log(error)
+            toast.error(error.response.data.message, {
+                position: "top-center",
+                transition: Slide
+            })
+            setIsLoading(false)
         })
     }, []);
 
@@ -41,7 +51,10 @@ function ShowRoles() {
 
     return (
         // <div>{roles.map(item=>item.rollName)}</div>
-        <div className="mt-5">
+        <div className="mt-5" >
+            <div>
+                {isLoading && <Loader/>}
+            </div>
             <Link to="create-role" className="btn btn-primary">Add Role</Link>
             <table className="table table-striped center">
                 <thead>

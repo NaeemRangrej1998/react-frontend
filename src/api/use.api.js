@@ -7,8 +7,8 @@ const API_BASE_URL_FOR_USER = "http://localhost:8080/user";
 //     return axios.get(`${API_BASE_URL_FOR_USER}/getUser`, { headers: authHeader() }).then((response)=>response.data);
 // }
 
-export function getAllUsers() {
-    return axiosInstance.get("/user/getUser" ).then((response)=>response.data);
+export function getAllUsers(pageNumber, pageSize) {
+    return axiosInstance.get(`/user/getUser?pageNo=${pageNumber}&pageSize=${pageSize}`).then((response)=>response.data);
 }
 
 export function saveUser(user) {
